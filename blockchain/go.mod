@@ -232,8 +232,6 @@ require (
 	pgregory.net/rapid v0.5.5 // indirect
 )
 
-replace gitlab.qredo.com/edmund/blackbird/verifier/golang v0.1.2 => github.com/qredo/blackbird/verifier/golang v0.0.0-20230330094021-716ea13e0979
-
 replace (
 	// use cosmos keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
@@ -243,6 +241,8 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.7.0
 	github.com/syndtr/goleveldb => github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
+	github.com/tendermint/tendermint => github.com/cometbft/cometbft v0.37.1
+	gitlab.qredo.com/edmund/blackbird/verifier/golang v0.1.2 => github.com/qredo/blackbird/verifier/golang v0.0.0-20230330094021-716ea13e0979
 	github.com/cosmos/cosmos-sdk => ./cosmos-sdk
 // Fix upstream GHSA-h395-qcrw-5vmq vulnerability.
 // TODO Remove it: https://github.com/cosmos/cosmos-sdk/issues/10409
