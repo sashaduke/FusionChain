@@ -31,7 +31,7 @@ var (
 	DefaultMinGasPrice = sdk.ZeroDec()
 	// DefaultEnableHeight is 0 (i.e disabled)
 	DefaultEnableHeight = int64(0)
-	// DefaultNoBaseFee has been set to true for ease of testing. This should be changed upon mainnet release
+	// DefaultNoBaseFee has been set to true for ease of testing. This should be changed back to false before mainnet release.
 	DefaultNoBaseFee = true
 )
 
