@@ -1,0 +1,12 @@
+92a93,97
+> func (config *Config) SetBech32PrefixForWorkspace(workspacePrefix string) {
+> 	config.assertNotSealed()
+> 	config.bech32AddressPrefix["workspace_addr"] = workspacePrefix
+> }
+> 
+164a170,174
+> // GetBech32WorkspaceAddrPrefix returns the Bech32 prefix for workspace address
+> func (config *Config) GetBech32WorkspaceAddrPrefix() string {
+> 	return config.bech32AddressPrefix["workspace_addr"]
+> }
+> 
