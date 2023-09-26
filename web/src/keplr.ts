@@ -1,5 +1,11 @@
 import { Chain } from "@evmos/transactions";
 import { useEffect, useState } from "react";
+import { fetchAccount, ethToFusion } from "./newclient/ethermint";
+import { hashMessage } from '@ethersproject/hash'
+import {
+  computePublicKey,
+  recoverPublicKey,
+} from '@ethersproject/signing-key'
 
 export const bech32Prefix = "qredo";
 
@@ -64,12 +70,12 @@ export async function enableKeplr() {
   await window.keplr.enable(chain.cosmosChainId);
 }
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+// function sleep(ms: number) {
+//   return new Promise(resolve => setTimeout(resolve, ms));
+// }
 
-export async function useKeplrAddress() {
-  const [addr, setAddr] = useState("");
+// export function useKeplrAddress() {
+  // const [addr, setAddr] = useState("");
 
   // useEffect(() => {
   //   const updateAddr = async () => {
@@ -92,33 +98,43 @@ export async function useKeplrAddress() {
   //   }
   // }, []);
 
-  const accounts = await window?.ethereum?.request({
-    method: 'eth_requestAccounts',
-  })
+  // return addr;
+// }
 
-  // Handle errors if MetaMask fails to return any accounts.
-  const message = 'Verify Public Key'
-
-  const signature = await window?.ethereum?.request({
-    method: 'personal_sign',
-    params: [message, accounts[0], ''],
-  })
-
-  // Compress the key, since the client expects
-  // public keys to be compressed.
-  const uncompressedPk = recoverPublicKey(
-    hashMessage(message),
-    signature,
-  )
-
-  const hexPk = computePublicKey(uncompressedPk, true)
-  const pubkey = Buffer.from(
-    hexPk.replace('0x', ''), 'hex',
-  ).toString('base64')
-
-  // fetch sequence number
-  const chainAccount = await fetchAccount(ethToFusion(accounts[0]));
-  setAddr(chainAccount)
+export function useKeplrAddress() {
+  const [addr, setAddr] = useState("");
   
+  useEffect(() => {
+    const updateAddr = async () => {
+      const accounts = await window?.ethereum?.request({
+        method: 'eth_requestAccounts',
+      })
+
+      // Handle errors if MetaMask fails to return any accounts.
+      const message = 'Verify Public Key'
+
+      // const signature =
+      await window?.ethereum?.request({
+        method: 'personal_sign',
+        params: [message, accounts[0], ''],
+      })
+
+      // Compress the key, since the client expects
+      // public keys to be compressed.
+      // const uncompressedPk = recoverPublicKey(
+      //   hashMessage(message),
+      //   signature,
+      // )
+
+      // const hexPk = computePublicKey(uncompressedPk, true)
+      // const pubkey = Buffer.from(
+      //   hexPk.replace('0x', ''), 'hex',
+      // ).toString('base64')
+
+      const fusionAccount = ethToFusion(accounts[0]);
+      setAddr(fusionAccount);
+    }
+    updateAddr();
+  }, []);
   return addr;
 }

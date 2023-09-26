@@ -1,14 +1,18 @@
 import { Outlet } from "react-router-dom";
 import Menu from "./menu";
-import { useEffect } from "react";
-import { enableKeplr } from "../keplr";
+import { useEffect, useState } from "react";
+import { enableKeplr, useKeplrAddress, useMetamaskAddress } from "../keplr";
 import AccountInfo from "@/components/account_info";
 import { Toaster } from "@/components/ui/toaster";
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function Root() {
   useEffect(() => {
     window.onload = async () => {
-      await enableKeplr();
+      // await enableKeplr();
     }
   }, []);
 

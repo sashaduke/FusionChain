@@ -1,4 +1,4 @@
-import { Message } from "@bufbuild/protobuf";
+import { Message } from '@bufbuild/protobuf';
 import {
   TxPayload,
   TxContext,
@@ -16,8 +16,9 @@ import {
   generatePostBodyBroadcast,
 } from '@evmos/provider'
 import { fromBase64 } from '@cosmjs/encoding';
-import { chainDescriptor } from "../keplr";
-import * as b32 from "bech32";
+import { chainDescriptor } from '../keplr';
+import { bech32 } from 'bech32';
+import { ETH } from '@evmos/address-converter';
 
 export async function fetchAccount(
   address: string,
@@ -120,15 +121,15 @@ export async function signTransactionKeplr(
 }
 
 function makeBech32Encoder(prefix) {
-    return (data) => b32.bech32.encode(prefix, b32.bech32.toWords(data));
+    return (data) => bech32.encode(prefix, bech32.toWords(data));
 }
 function makeBech32Decoder(currentPrefix) {
     return (data) => {
-        const { prefix, words } = b32.bech32.decode(data);
+        const { prefix, words } = bech32.decode(data);
         if (prefix !== currentPrefix) {
             throw Error('Unrecognised address format');
         }
-        return Buffer.from(b32.bech32.fromWords(words));
+        return Buffer.from(bech32.fromWords(words));
     };
 }
 const bech32Chain = (name, prefix) => ({
@@ -136,14 +137,14 @@ const bech32Chain = (name, prefix) => ({
     encoder: makeBech32Encoder(prefix),
     name,
 });
-const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
+export const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
 export const ethToFusion = (ethAddress) => {
-    const data = FUSION.decoder(ethAddress);
+    const data = ETH.decoder(ethAddress);
     return FUSION.encoder(data);
 };
 const fusionToEth = (fusionAddress) => {
     const data = FUSION.decoder(fusionAddress);
-    return FUSION.encoder(data);
+    return ETH.encoder(data);
 };
 
 export async function signTransactionMetamask(
