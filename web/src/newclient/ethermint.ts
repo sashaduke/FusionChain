@@ -158,7 +158,7 @@ export async function signTransactionMetamask(
   const senderHexAddress = fusionToEth(sender.accountAddress)
   const eip712Payload = JSON.stringify(tx.eipToSign)
 
-  const signature = await window.ethereum.request({
+  const signature = await window?.ethereum?.request({
     method: 'eth_signTypedData_v4',
     params: [senderHexAddress, eip712Payload],
   })
