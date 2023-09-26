@@ -1,5 +1,5 @@
 import { TxContext } from "@evmos/transactions";
-import { broadcastTransaction, buildTransaction, fetchAccount, signTransaction } from ".";
+import { broadcastTransaction, buildTransaction, fetchAccount, signTransactionKeplr } from ".";
 import { chain } from "../keplr";
 import { Message } from "@bufbuild/protobuf";
 
@@ -34,7 +34,7 @@ export async function keplrBuildAndBroadcast(msgs: Message<any>[]) {
   // 1 - build tx
   const tx = buildTransaction(context, msgs);
   // 2 - sign tx
-  const signedTx = await signTransaction(context, tx);
+  const signedTx = await signTransactionKeplr(context, tx);
   // 3 - broadcast tx
   const res = await broadcastTransaction(signedTx, undefined);
 

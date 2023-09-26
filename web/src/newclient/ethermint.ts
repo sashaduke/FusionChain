@@ -17,6 +17,7 @@ import {
 } from '@evmos/provider'
 import { fromBase64 } from '@cosmjs/encoding';
 import { chainDescriptor } from "../keplr";
+import * as b32 from "bech32";
 
 export async function fetchAccount(
   address: string,
@@ -80,7 +81,7 @@ export function buildTransaction(
   return tx;
 }
 
-export async function signTransaction(
+export async function signTransactionKeplr(
   context: TxContext,
   tx: TxPayload,
 ) {
@@ -113,6 +114,66 @@ export async function signTransaction(
     signed.bodyBytes,
     signed.authInfoBytes,
     signatures,
+  )
+
+  return signedTx;
+}
+
+function makeBech32Encoder(prefix) {
+    return (data) => b32.bech32.encode(prefix, b32.bech32.toWords(data));
+}
+function makeBech32Decoder(currentPrefix) {
+    return (data) => {
+        const { prefix, words } = b32.bech32.decode(data);
+        if (prefix !== currentPrefix) {
+            throw Error('Unrecognised address format');
+        }
+        return Buffer.from(b32.bech32.fromWords(words));
+    };
+}
+const bech32Chain = (name, prefix) => ({
+    decoder: makeBech32Decoder(prefix),
+    encoder: makeBech32Encoder(prefix),
+    name,
+});
+const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
+const ethToFusion = (ethAddress) => {
+    const data = FUSION.decoder(ethAddress);
+    return FUSION.encoder(data);
+};
+const fusionToEth = (fusionAddress) => {
+    const data = FUSION.decoder(fusionAddress);
+    return FUSION.encoder(data);
+};
+
+export async function signTransactionMetamask(
+  context: TxContext,
+  tx: TxPayload,
+) {
+  const { sender } = context
+
+  // Initialize MetaMask and sign the EIP-712 payload.
+  await window.ethereum.enable()
+
+  const senderHexAddress = fusionToEth(sender.accountAddress)
+  const eip712Payload = JSON.stringify(tx.eipToSign)
+
+  const signature = await window.ethereum.request({
+    method: 'eth_signTypedData_v4',
+    params: [senderHexAddress, eip712Payload],
+  })
+
+  // Create a signed Tx payload that can be broadcast to a node.
+  const signatureBytes = Buffer.from(signature.replace('0x', ''), 'hex')
+
+  const { signDirect } = tx
+  const bodyBytes = signDirect.body.toBinary()
+  const authInfoBytes = signDirect.authInfo.toBinary()
+
+  const signedTx = createTxRaw(
+    bodyBytes,
+    authInfoBytes,
+    [signatureBytes],
   )
 
   return signedTx;
