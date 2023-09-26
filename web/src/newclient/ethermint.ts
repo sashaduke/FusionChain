@@ -137,7 +137,7 @@ const bech32Chain = (name, prefix) => ({
     name,
 });
 const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
-const ethToFusion = (ethAddress) => {
+export const ethToFusion = (ethAddress) => {
     const data = FUSION.decoder(ethAddress);
     return FUSION.encoder(data);
 };

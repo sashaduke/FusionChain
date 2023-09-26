@@ -1,5 +1,5 @@
 import { TxContext } from "@evmos/transactions";
-import { broadcastTransaction, buildTransaction, fetchAccount, signTransactionMetamask } from ".";
+import { broadcastTransaction, buildTransaction, fetchAccount, signTransactionMetamask, ethToFusion } from ".";
 import { chain } from "../keplr";
 import { Message } from "@bufbuild/protobuf";
 import { hashMessage } from '@ethersproject/hash'
@@ -34,7 +34,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   ).toString('base64')
 
   // fetch sequence number
-  const chainAccount = await fetchAccount(accounts[0].bech32Address);
+  const chainAccount = await fetchAccount(ethToFusion(accounts[0]));
 
   // build tx context
   const context: TxContext = {

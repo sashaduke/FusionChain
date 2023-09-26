@@ -68,28 +68,57 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function useKeplrAddress() {
+export async function useKeplrAddress() {
   const [addr, setAddr] = useState("");
 
-  useEffect(() => {
-    const updateAddr = async () => {
-      if (!window.keplr) {
-        await sleep(1000);
-      }
+  // useEffect(() => {
+  //   const updateAddr = async () => {
+  //     if (!window.keplr) {
+  //       await sleep(1000);
+  //     }
 
-      if (!window.keplr) {
-        alert("Keplr not found. Please install keplr extension.");
-        return
-      }
-      const key = await window.keplr.getKey(chain.cosmosChainId);
-      setAddr(key.bech32Address);
-    }
+  //     if (!window.keplr) {
+  //       alert("Keplr not found. Please install keplr extension.");
+  //       return
+  //     }
+  //     const key = await window.keplr.getKey(chain.cosmosChainId);
+  //     setAddr(key.bech32Address);
+  //   }
 
-    window.addEventListener("keplr_keystorechange", updateAddr);
-    updateAddr();
-    return () => {
-      window.removeEventListener("keplr_keystorechange", updateAddr);
-    }
-  }, []);
+  //   window.addEventListener("keplr_keystorechange", updateAddr);
+  //   updateAddr();
+  //   return () => {
+  //     window.removeEventListener("keplr_keystorechange", updateAddr);
+  //   }
+  // }, []);
+
+  const accounts = await window?.ethereum?.request({
+    method: 'eth_requestAccounts',
+  })
+
+  // Handle errors if MetaMask fails to return any accounts.
+  const message = 'Verify Public Key'
+
+  const signature = await window?.ethereum?.request({
+    method: 'personal_sign',
+    params: [message, accounts[0], ''],
+  })
+
+  // Compress the key, since the client expects
+  // public keys to be compressed.
+  const uncompressedPk = recoverPublicKey(
+    hashMessage(message),
+    signature,
+  )
+
+  const hexPk = computePublicKey(uncompressedPk, true)
+  const pubkey = Buffer.from(
+    hexPk.replace('0x', ''), 'hex',
+  ).toString('base64')
+
+  // fetch sequence number
+  const chainAccount = await fetchAccount(ethToFusion(accounts[0]));
+  setAddr(chainAccount)
+  
   return addr;
 }

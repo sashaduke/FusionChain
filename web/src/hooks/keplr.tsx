@@ -1,7 +1,7 @@
 import { txByHash } from "@/client/chain";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { TxResponse, keplrBuildAndBroadcast } from "@/newclient";
+import { TxResponse, keplrBuildAndBroadcast, metamaskBuildAndBroadcast } from "@/newclient";
 import { Message } from "@bufbuild/protobuf";
 import { ToastAction } from "@radix-ui/react-toast";
 import { Link } from "react-router-dom";
@@ -13,7 +13,7 @@ export function useBroadcaster() {
     let id: string | null = null;
     let update: ((props: any) => void) | null = null;
     try {
-      const res = await keplrBuildAndBroadcast(msgs);
+      const res = await metamaskBuildAndBroadcast(msgs);
 
       const { id: toastId, update: updateFn } = toast({
         title: "Broadcasting transaction",
