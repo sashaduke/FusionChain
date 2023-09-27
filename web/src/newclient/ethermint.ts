@@ -2,10 +2,16 @@ import { Message } from '@bufbuild/protobuf';
 import {
   TxPayload,
   TxContext,
+  MsgSendParams,
+  createTxMsgSend,
 } from '@evmos/transactions'
-import { createTxRaw } from '@evmos/proto'
-import { createTransactionWithMultipleMessages } from '@evmos/proto';
-import { createEIP712, generateFee, generateMessageWithMultipleTransactions, } from '@evmos/eip712';
+import { createTxRaw, createTransactionWithMultipleMessages } from '@evmos/proto';
+import {
+  createEIP712,
+  generateFee,
+  generateMessageWithMultipleTransactions,
+  generateTypes,
+} from '@evmos/eip712';
 import Long from 'long'
 import {
   AccountResponse,
@@ -71,13 +77,36 @@ export function buildTransaction(
     context.chain.cosmosChainId,
     context.memo,
     feeObject,
-    wrappedMsgs,
+    wrappedMsgs, // TODO: This might need changing
   );
+
+  const MSG_NEW_WORKSPACE_TYPES = {
+    MsgValue: [
+      { name: 'creator', type: 'string' },
+      { name: 'admin_policy_id', type: 'uint64' },
+      { name: 'sign_policy_id', type: 'uint64' },
+      // { name: 'amount', type: 'TypeAmount[]' },
+    ],
+    // TypeAmount: [
+    //   { name: 'denom', type: 'string' },
+    //   { name: 'amount', type: 'string' },
+    // ],
+  };
+  const types = generateTypes(MSG_NEW_WORKSPACE_TYPES)
+
+  const params: MsgSendParams = {
+    destinationAddress: 'qredo1234',
+    amount: 'qredo1987',
+    denom: 'qrdo',
+  }
+  console.log(JSON.stringify(createTxMsgSend(context, params).eipToSign))
+  // console.log(createEIP712(wrappedMsgs, context.chain.chainId, msg))
+  // console.log("got ere")
 
   const tx: TxPayload = {
     signDirect: txRaw.signDirect,
     legacyAmino: txRaw.legacyAmino,
-    eipToSign: createEIP712(wrappedMsgs, context.chain.chainId, msg),
+    eipToSign: createEIP712(types, context.chain.chainId, msg),
   }
 
   return tx;
@@ -137,14 +166,13 @@ export async function signTransactionMetamask(
   const { sender } = context
 
   const senderHexAddress = fusionToEth(sender.accountAddress)
-  const eip712Payload = JSON.stringify(tx.eipToSign) // TODO: Fix this malformed payload
+  const eip712Payload = JSON.stringify(tx.eipToSign)
   console.log(eip712Payload)
-
+  
   const signature = await window?.ethereum?.request({
     method: 'eth_signTypedData_v4',
     params: [senderHexAddress, eip712Payload],
   })
-  console.log(signature)
 
   const signatureBytes = Buffer.from(signature.replace('0x', ''), 'hex')
 
