@@ -22,8 +22,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
     params: [message, accounts[0], ''],
   })
 
-  // Compress the key, since the client expects
-  // public keys to be compressed.
+  // Compress the key, since the client expects public keys to be compressed.
   const uncompressedPk = recoverPublicKey(
     hashMessage(message),
     signature,
@@ -56,7 +55,6 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   const tx = buildTransaction(context, msgs);
   // 2 - sign tx
   const signedTx = await signTransactionMetamask(context, tx);
-  console.log(signedTx)
   // 3 - broadcast tx
   const res = await broadcastTransaction(signedTx, undefined);
 

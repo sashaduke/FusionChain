@@ -49,6 +49,17 @@ export async function fetchAccount(
   return result as AccountResponse;
 }
 
+export function createMsgNewWorkspace(creator, adminPolicyID, signPolicyID) {
+  return {
+    type: 'fusionchain.identity.MsgNewWorkspace',
+    value: {
+      creator: creator,
+      admin_policy_id: adminPolicyID,
+      sign_policy_id: signPolicyID,
+    },
+  };
+}
+
 export function buildTransaction(
   context: TxContext,
   msgs: Message<any>[],
@@ -70,38 +81,28 @@ export function buildTransaction(
     context.sender.accountNumber,
     context.chain.cosmosChainId,
   )
+  
   const feeObject = generateFee(context.fee.amount, context.fee.denom, context.fee.gas, context.sender.accountAddress);
+
+  const createNewWorkspaceMsg = createMsgNewWorkspace(context.sender.accountAddress, 0, 0)
+  const MSG_NEW_WORKSPACE_TYPES = {
+    MsgValue: [
+      { name: 'creator', type: 'string' },
+      { name: 'admin_policy_id', type: 'uint64' },
+      { name: 'sign_policy_id', type: 'uint64' },
+    ],
+  };
+  const types = generateTypes(MSG_NEW_WORKSPACE_TYPES)
+
   const msg = generateMessageWithMultipleTransactions(
     context.sender.accountNumber.toString(),
     context.sender.sequence.toString(),
     context.chain.cosmosChainId,
     context.memo,
     feeObject,
-    wrappedMsgs, // TODO: This might need changing
+    // wrappedMsgs,
+    [createNewWorkspaceMsg],
   );
-
-  const MSG_NEW_WORKSPACE_TYPES = {
-    MsgValue: [
-      { name: 'creator', type: 'string' },
-      { name: 'admin_policy_id', type: 'uint64' },
-      { name: 'sign_policy_id', type: 'uint64' },
-      // { name: 'amount', type: 'TypeAmount[]' },
-    ],
-    // TypeAmount: [
-    //   { name: 'denom', type: 'string' },
-    //   { name: 'amount', type: 'string' },
-    // ],
-  };
-  const types = generateTypes(MSG_NEW_WORKSPACE_TYPES)
-
-  const params: MsgSendParams = {
-    destinationAddress: 'qredo1234',
-    amount: 'qredo1987',
-    denom: 'qrdo',
-  }
-  console.log(JSON.stringify(createTxMsgSend(context, params).eipToSign))
-  // console.log(createEIP712(wrappedMsgs, context.chain.chainId, msg))
-  // console.log("got ere")
 
   const tx: TxPayload = {
     signDirect: txRaw.signDirect,
@@ -207,6 +208,7 @@ export async function broadcastTransaction(
 
   const { tx_response } = await broadcastPost.json()
   if (tx_response.code) {
+    console.log(tx_response.raw_log)
     throw new Error("Error from chain node: " + tx_response.raw_log)
   }
 
