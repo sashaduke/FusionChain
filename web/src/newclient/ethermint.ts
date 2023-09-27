@@ -19,6 +19,7 @@ import { fromBase64 } from '@cosmjs/encoding';
 import { chainDescriptor } from '../keplr';
 import { bech32 } from 'bech32';
 import { ETH } from '@evmos/address-converter';
+import { Buffer } from 'buffer';
 
 export async function fetchAccount(
   address: string,
@@ -120,33 +121,14 @@ export async function signTransactionKeplr(
   return signedTx;
 }
 
-// function makeBech32Encoder(prefix) {
-//     return (data) => bech32.encode(prefix, bech32.toWords(data));
-// }
-// function makeBech32Decoder(currentPrefix) {
-//     return (data) => {
-//         const { prefix, words } = bech32.decode(data);
-//         if (prefix !== currentPrefix) {
-//             throw Error('Unrecognised address format');
-//         }
-//         return Buffer.from(bech32.fromWords(words));
-//     };
-// }
-// const bech32Chain = (name, prefix) => ({
-//     decoder: makeBech32Decoder(prefix),
-//     encoder: makeBech32Encoder(prefix),
-//     name,
-// });
-// export const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
 export const ethToFusion = (ethAddress) => {
     const data = ETH.decoder(ethAddress);
-    // return FUSION.encoder(data);
-    return bech32.encode('qredo', bech32.toWords(data))
+    return bech32.encode('qredo', bech32.toWords(data));
 };
-// const fusionToEth = (fusionAddress) => {
-//     const data = FUSION.decoder(fusionAddress);
-//     return ETH.encoder(data);
-// };
+const fusionToEth = (fusionAddress) => {
+    const { prefix, words } = bech32.decode(fusionAddress);
+    return ETH.encoder(Buffer.from(bech32.fromWords(words)));
+};
 
 export async function signTransactionMetamask(
   context: TxContext,
@@ -154,18 +136,16 @@ export async function signTransactionMetamask(
 ) {
   const { sender } = context
 
-  // Initialize MetaMask and sign the EIP-712 payload.
-  await window.ethereum.enable()
-
   const senderHexAddress = fusionToEth(sender.accountAddress)
-  const eip712Payload = JSON.stringify(tx.eipToSign)
+  const eip712Payload = JSON.stringify(tx.eipToSign) // TODO: Fix this malformed payload
+  console.log(eip712Payload)
 
   const signature = await window?.ethereum?.request({
     method: 'eth_signTypedData_v4',
     params: [senderHexAddress, eip712Payload],
   })
+  console.log(signature)
 
-  // Create a signed Tx payload that can be broadcast to a node.
   const signatureBytes = Buffer.from(signature.replace('0x', ''), 'hex')
 
   const { signDirect } = tx

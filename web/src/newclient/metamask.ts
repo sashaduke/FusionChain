@@ -7,6 +7,7 @@ import {
   computePublicKey,
   recoverPublicKey,
 } from '@ethersproject/signing-key'
+import { Buffer } from 'buffer';
 
 export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   const accounts = await window?.ethereum?.request({
@@ -29,9 +30,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   )
 
   const hexPk = computePublicKey(uncompressedPk, true)
-  const pubkey = Buffer.from(
-    hexPk.replace('0x', ''), 'hex',
-  ).toString('base64')
+  const pubkey = Buffer.from(hexPk.replace('0x', ''), 'hex').toString('base64')
 
   // fetch sequence number
   const chainAccount = await fetchAccount(ethToFusion(accounts[0]));
@@ -57,6 +56,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   const tx = buildTransaction(context, msgs);
   // 2 - sign tx
   const signedTx = await signTransactionMetamask(context, tx);
+  console.log(signedTx)
   // 3 - broadcast tx
   const res = await broadcastTransaction(signedTx, undefined);
 

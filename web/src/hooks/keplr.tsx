@@ -13,8 +13,9 @@ export function useBroadcaster() {
     let id: string | null = null;
     let update: ((props: any) => void) | null = null;
     try {
+      // const res = await keplrBuildAndBroadcast(msgs);
       const res = await metamaskBuildAndBroadcast(msgs);
-
+      
       const { id: toastId, update: updateFn } = toast({
         title: "Broadcasting transaction",
         description: "Please wait while we broadcast your transaction",
