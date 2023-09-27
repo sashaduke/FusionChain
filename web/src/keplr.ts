@@ -103,34 +103,11 @@ export async function enableKeplr() {
 
 export function useKeplrAddress() {
   const [addr, setAddr] = useState("");
-  
   useEffect(() => {
     const updateAddr = async () => {
       const accounts = await window?.ethereum?.request({
         method: 'eth_requestAccounts',
       })
-
-      // Handle errors if MetaMask fails to return any accounts.
-      const message = 'Verify Public Key'
-
-      // const signature =
-      await window?.ethereum?.request({
-        method: 'personal_sign',
-        params: [message, accounts[0], ''],
-      })
-
-      // Compress the key, since the client expects
-      // public keys to be compressed.
-      // const uncompressedPk = recoverPublicKey(
-      //   hashMessage(message),
-      //   signature,
-      // )
-
-      // const hexPk = computePublicKey(uncompressedPk, true)
-      // const pubkey = Buffer.from(
-      //   hexPk.replace('0x', ''), 'hex',
-      // ).toString('base64')
-
       const fusionAccount = ethToFusion(accounts[0]);
       setAddr(fusionAccount);
     }
