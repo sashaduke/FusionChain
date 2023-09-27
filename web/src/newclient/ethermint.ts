@@ -120,32 +120,33 @@ export async function signTransactionKeplr(
   return signedTx;
 }
 
-function makeBech32Encoder(prefix) {
-    return (data) => bech32.encode(prefix, bech32.toWords(data));
-}
-function makeBech32Decoder(currentPrefix) {
-    return (data) => {
-        const { prefix, words } = bech32.decode(data);
-        if (prefix !== currentPrefix) {
-            throw Error('Unrecognised address format');
-        }
-        return Buffer.from(bech32.fromWords(words));
-    };
-}
-const bech32Chain = (name, prefix) => ({
-    decoder: makeBech32Decoder(prefix),
-    encoder: makeBech32Encoder(prefix),
-    name,
-});
-export const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
+// function makeBech32Encoder(prefix) {
+//     return (data) => bech32.encode(prefix, bech32.toWords(data));
+// }
+// function makeBech32Decoder(currentPrefix) {
+//     return (data) => {
+//         const { prefix, words } = bech32.decode(data);
+//         if (prefix !== currentPrefix) {
+//             throw Error('Unrecognised address format');
+//         }
+//         return Buffer.from(bech32.fromWords(words));
+//     };
+// }
+// const bech32Chain = (name, prefix) => ({
+//     decoder: makeBech32Decoder(prefix),
+//     encoder: makeBech32Encoder(prefix),
+//     name,
+// });
+// export const FUSION = bech32Chain('FUSIONCHAIN', 'qredo');
 export const ethToFusion = (ethAddress) => {
     const data = ETH.decoder(ethAddress);
-    return FUSION.encoder(data);
+    // return FUSION.encoder(data);
+    return bech32.encode('qredo', bech32.toWords(data))
 };
-const fusionToEth = (fusionAddress) => {
-    const data = FUSION.decoder(fusionAddress);
-    return ETH.encoder(data);
-};
+// const fusionToEth = (fusionAddress) => {
+//     const data = FUSION.decoder(fusionAddress);
+//     return ETH.encoder(data);
+// };
 
 export async function signTransactionMetamask(
   context: TxContext,
