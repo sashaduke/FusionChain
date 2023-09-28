@@ -108,7 +108,17 @@ export function buildTransaction(
     legacyAmino: txRaw.legacyAmino,
     eipToSign: createEIP712(types, context.chain.chainId, msg),
   }
-  console.log(tx.eipToSign)
+  // console.log(tx.eipToSign)
+
+  // const params: MsgSendParams = {
+  //   destinationAddress: 'qredo13vsljgw3ng34jj4c24xuwy05yr3jhc3hdc2rac',
+  //   amount: '5000000',
+  //   denom: 'nQRDO',
+  // }
+  // const tx2 = createTxMsgSend(context, params)
+  // console.log(tx2.eipToSign)
+  // const signedTx = await signTransactionMetamask(context, tx2)
+  // await broadcastTransaction(signedTx, undefined)
 
   return tx;
 }

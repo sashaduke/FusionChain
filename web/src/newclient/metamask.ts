@@ -44,13 +44,12 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
       pubkey,
     },
     fee: {
-      amount: '200000000000000',
+      amount: '10000000',
       denom: 'nQRDO',
       gas: '200000',
     },
     memo: "",
   }
-  console.log(context)
 
   // 1 - build tx
   const tx = buildTransaction(context, msgs);
