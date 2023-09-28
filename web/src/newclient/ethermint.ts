@@ -83,7 +83,6 @@ export function buildTransaction(
   )
   
   const feeObject = generateFee(context.fee.amount, context.fee.denom, context.fee.gas, context.sender.accountAddress);
-
   const createNewWorkspaceMsg = createMsgNewWorkspace(context.sender.accountAddress, 0, 0)
   const MSG_NEW_WORKSPACE_TYPES = {
     MsgValue: [
@@ -109,6 +108,7 @@ export function buildTransaction(
     legacyAmino: txRaw.legacyAmino,
     eipToSign: createEIP712(types, context.chain.chainId, msg),
   }
+  console.log(tx.eipToSign)
 
   return tx;
 }
@@ -168,7 +168,6 @@ export async function signTransactionMetamask(
 
   const senderHexAddress = fusionToEth(sender.accountAddress)
   const eip712Payload = JSON.stringify(tx.eipToSign)
-  console.log(eip712Payload)
   
   const signature = await window?.ethereum?.request({
     method: 'eth_signTypedData_v4',

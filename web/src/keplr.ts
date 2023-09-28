@@ -1,11 +1,6 @@
 import { Chain } from "@evmos/transactions";
 import { useEffect, useState } from "react";
-import { fetchAccount, ethToFusion } from "./newclient/ethermint";
-import { hashMessage } from '@ethersproject/hash'
-import {
-  computePublicKey,
-  recoverPublicKey,
-} from '@ethersproject/signing-key'
+import { ethToFusion } from "./newclient/ethermint";
 
 export const bech32Prefix = "qredo";
 

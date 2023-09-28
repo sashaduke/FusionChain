@@ -50,6 +50,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
     },
     memo: "",
   }
+  console.log(context)
 
   // 1 - build tx
   const tx = buildTransaction(context, msgs);
