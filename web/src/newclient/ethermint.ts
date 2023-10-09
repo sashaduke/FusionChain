@@ -51,7 +51,7 @@ export async function fetchAccount(
 
 export function createMsgNewWorkspace(creator, adminPolicyID, signPolicyID) {
   return {
-    type: 'fusionchain.identity.MsgNewWorkspace',
+    type: '/fusionchain.identity.MsgNewWorkspace',
     value: {
       creator: creator,
       admin_policy_id: adminPolicyID,
@@ -60,7 +60,7 @@ export function createMsgNewWorkspace(creator, adminPolicyID, signPolicyID) {
   };
 }
 
-export function buildTransaction(
+export async function buildTransaction(
   context: TxContext,
   msgs: Message<any>[],
 ) {
@@ -108,15 +108,15 @@ export function buildTransaction(
     legacyAmino: txRaw.legacyAmino,
     eipToSign: createEIP712(types, context.chain.chainId, msg),
   }
-  // console.log(tx.eipToSign)
+  console.log(tx)
 
-  // const params: MsgSendParams = {
-  //   destinationAddress: 'qredo13vsljgw3ng34jj4c24xuwy05yr3jhc3hdc2rac',
-  //   amount: '5000000',
-  //   denom: 'nQRDO',
-  // }
-  // const tx2 = createTxMsgSend(context, params)
-  // console.log(tx2.eipToSign)
+  const params: MsgSendParams = {
+    destinationAddress: 'qredo13vsljgw3ng34jj4c24xuwy05yr3jhc3hdc2rac',
+    amount: '5000000000000',
+    denom: 'nQRDO',
+  }
+  const tx2 = createTxMsgSend(context, params)
+  console.log(tx2)
   // const signedTx = await signTransactionMetamask(context, tx2)
   // await broadcastTransaction(signedTx, undefined)
 
@@ -220,6 +220,7 @@ export async function broadcastTransaction(
     console.log(tx_response.raw_log)
     throw new Error("Error from chain node: " + tx_response.raw_log)
   }
+  console.log(tx_response)
 
   return tx_response as TxResponse;
 }

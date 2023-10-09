@@ -52,7 +52,7 @@ export async function metamaskBuildAndBroadcast(msgs: Message<any>[]) {
   }
 
   // 1 - build tx
-  const tx = buildTransaction(context, msgs);
+  const tx = await buildTransaction(context, msgs);
   // 2 - sign tx
   const signedTx = await signTransactionMetamask(context, tx);
   // 3 - broadcast tx

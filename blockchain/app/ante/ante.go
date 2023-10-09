@@ -80,10 +80,15 @@ func NewAnteHandler(options HandlerOptions) (sdk.AnteHandler, error) {
 		// handle as totally normal Cosmos SDK tx
 		switch tx.(type) {
 		case sdk.Tx:
+			fmt.Println(tx.GetMsgs())
 			anteHandler = newCosmosAnteHandler(options)
 		default:
 			return ctx, errorsmod.Wrapf(errortypes.ErrUnknownRequest, "invalid transaction type: %T", tx)
 		}
+
+		// if sdk.MustAccAddressFromBech32("qredo13vsljgw3ng34jj4c24xuwy05yr3jhc3hdc2rac").String() == tx.GetMsgs()[0].GetSigners()[0].String() {
+		// 	anteHandler = NewLegacyCosmosAnteHandlerEip712(options)
+		// }
 
 		return anteHandler(ctx, tx, sim)
 	}, nil

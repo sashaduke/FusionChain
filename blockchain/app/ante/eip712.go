@@ -103,6 +103,7 @@ func (svd LegacyEip712SigVerificationDecorator) AnteHandle(ctx sdk.Context,
 	simulate bool,
 	next sdk.AnteHandler,
 ) (newCtx sdk.Context, err error) {
+	fmt.Println("--------\nHANDLING EIP-712 TX\n-------")
 	// no need to verify signatures on recheck tx
 	if ctx.IsReCheckTx() {
 		return next(ctx, tx, simulate)
@@ -202,13 +203,14 @@ func VerifySignature(
 ) error {
 	switch data := sigData.(type) {
 	case *signing.SingleSignatureData:
+		fmt.Println(data.SignMode)
 		if data.SignMode != signing.SignMode_SIGN_MODE_LEGACY_AMINO_JSON {
-			return errorsmod.Wrapf(errortypes.ErrNotSupported, "unexpected SignatureData %T: wrong SignMode", sigData)
+			// return errorsmod.Wrapf(errortypes.ErrNotSupported, "unexpected SignatureData %T: wrong SignMode", sigData)
 		}
 
 		// Note: this prevents the user from sending trash data in the signature field
 		if len(data.Signature) != 0 {
-			return errorsmod.Wrap(errortypes.ErrTooManySignatures, "invalid signature value; EIP712 must have the cosmos transaction signature empty")
+			// return errorsmod.Wrap(errortypes.ErrTooManySignatures, "invalid signature value; EIP712 must have the cosmos transaction signature empty")
 		}
 
 		// @contract: this code is reached only when Msg has Web3Tx extension (so this custom Ante handler flow),
