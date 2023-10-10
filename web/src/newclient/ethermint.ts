@@ -51,7 +51,7 @@ export async function fetchAccount(
 
 export function createMsgNewWorkspace(creator, adminPolicyID, signPolicyID) {
   return {
-    type: '/fusionchain.identity.MsgNewWorkspace',
+    type: 'fusionchain/MsgNewWorkspace',
     value: {
       creator: creator,
       admin_policy_id: adminPolicyID,
@@ -68,7 +68,8 @@ export async function buildTransaction(
     message: msg,
     path: msg.getType().typeName,
   }));
-
+  console.log(msgs)
+  const createNewWorkspaceMsg = createMsgNewWorkspace(context.sender.accountAddress, 0, 0)
   const txRaw = createTransactionWithMultipleMessages(
     wrappedMsgs,
     "",
@@ -83,7 +84,6 @@ export async function buildTransaction(
   )
   
   const feeObject = generateFee(context.fee.amount, context.fee.denom, context.fee.gas, context.sender.accountAddress);
-  const createNewWorkspaceMsg = createMsgNewWorkspace(context.sender.accountAddress, 0, 0)
   const MSG_NEW_WORKSPACE_TYPES = {
     MsgValue: [
       { name: 'creator', type: 'string' },

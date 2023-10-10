@@ -39,6 +39,7 @@ const (
 // corresponding to the input data.
 func createEIP712MessagePayload(data []byte) (eip712MessagePayload, error) {
 	basicPayload, err := unmarshalBytesToJSONObject(data)
+	// fmt.Println("basic: ", basicPayload)
 	if err != nil {
 		return eip712MessagePayload{}, err
 	}

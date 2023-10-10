@@ -88,13 +88,13 @@ func createEIP712Types(messagePayload eip712MessagePayload) (apitypes.Types, err
 			{Name: "amount", Type: "string"},
 		},
 	}
-	fmt.Println(messagePayload)
+	fmt.Println("payload: ", messagePayload)
 	for i := 0; i < messagePayload.numPayloadMsgs; i++ {
 		field := msgFieldForIndex(i)
 		msg := messagePayload.payload.Get(field)
 		fmt.Println("---------\n\nBruh\n\n---------")
 		if err := addMsgTypesToRoot(eip712Types, field, msg); err != nil {
-			fmt.Println(err)
+			fmt.Println("error: ", err)
 			return nil, err
 		}
 	}
@@ -129,7 +129,6 @@ func addMsgTypesToRoot(eip712Types apitypes.Types, msgField string, msg gjson.Re
 // msgRootType parses the message and returns the formatted
 // type signature corresponding to the message type.
 func msgRootType(msg gjson.Result) (string, error) {
-	fmt.Println("msg:", msg)
 	msgType := msg.Get(msgTypeField).Str
 	if msgType == "" {
 		// .Str is empty for arrays and objects

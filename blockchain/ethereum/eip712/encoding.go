@@ -204,10 +204,13 @@ func decodeProtobufSignDoc(signDocBytes []byte) (apitypes.TypedData, error) {
 		tip,
 	)
 
+	fmt.Println("body: ", body, "\nmsgs: ", msgs)
+	fmt.Println("protobuf decoding!")
 	typedData, err := WrapTxToTypedData(
 		chainID.Uint64(),
 		signBytes,
 	)
+	fmt.Println("typedData: ", typedData)
 	if err != nil {
 		return apitypes.TypedData{}, err
 	}
