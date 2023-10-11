@@ -6,5 +6,7 @@ contracts/node_modules
 contracts/*/target
 contracts/packages/*/target
 build/
+blockchain/cmd/faucet/faucet
+blockchain/cmd/fusiond/fusiond
 
 mokr/mokr

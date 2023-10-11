@@ -1,7 +1,7 @@
 #!/bin/bash
 
-K1="shulgin"
-K2="pootis"
+Default_ACCOUNT1="shulgin"
+Default_ACCOUNT2="pootis"
 CHAINID="fusion_420-1"
 MONIKER="fusiontestnet"
 KEYRING="test"
@@ -10,6 +10,43 @@ LOGLEVEL="info"
 # trace evm
 TRACE="--trace"
 # TRACE=""
+FCHAIN_NODE="tcp://localhost:27657"
+FCHAIN_HOME="~/.fusiond/"
+FCHAIN_GAS_PRICES="1000000000nQRDO"
+
+
+install_if_not_present() {
+    local command_name="$1"
+    if ! command -v "$command_name" > /dev/null 2>&1; then
+        echo "$command_name is not installed. We will need root rights to install it"
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            # Assume Ubuntu/Debian for simplicity. Adjust for other distros if needed.
+            sudo apt update && sudo apt install -y "$command_name"
+        elif [[ "$OSTYPE" == "darwin"* ]]; then
+            # macOS //not tested
+            brew install "$command_name"
+        else
+            echo "Unsupported OS for auto-install. Install $command_name manually. More info: https://example.com/$command_name/download/"
+            exit 1
+        fi
+    fi
+}
+
+function ssed {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        gsed "$@"
+    else
+        sed "$@"
+    fi
+}
+
+# Check and install jq
+install_if_not_present "jq"
+
+# Check and install gsed on macOS // to be tested
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    install_if_not_present "gsed"
+fi
 
 # validate dependencies are installed
 command -v jq > /dev/null 2>&1 || { echo >&2 "jq not installed. More info: https://stedolan.github.io/jq/download/"; exit 1; }
@@ -27,9 +64,9 @@ make install
 fusiond config keyring-backend $KEYRING
 fusiond config chain-id $CHAINID
 
-#fusiond keys add $K1 --keyring-backend $KEYRING --algo $KEYALGO
-echo "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge" | fusiond keys add $K1 --recover
-echo "maximum fold demand spend gauge describe expect end grain entry glow purse enlist chronic robust shy panic arrange eye retreat video chat sense rare" | fusiond keys add $K2 --recover
+#fusiond keys add $Default_ACCOUNT1 --keyring-backend $KEYRING --algo $KEYALGO
+echo "exclude try nephew main caught favorite tone degree lottery device tissue tent ugly mouse pelican gasp lava flush pen river noise remind balcony emerge" | fusiond keys add $Default_ACCOUNT1 --recover
+echo "maximum fold demand spend gauge describe expect end grain entry glow purse enlist chronic robust shy panic arrange eye retreat video chat sense rare" | fusiond keys add $Default_ACCOUNT2 --recover
 # echo "wool bind jeans erase promote ten session sleep logic brick drift moral twist assume people action donor guard govern three disagree share clinic oppose" | fusiond keys add $K3 --recover
 
 # Set moniker and chain-id
@@ -50,13 +87,7 @@ cat $HOME/.fusiond/config/genesis.json | jq '.app_state["identity"]["workspaces"
 cat $HOME/.fusiond/config/genesis.json | jq '.consensus_params["block"]["max_gas"]="20000000"' > $HOME/.fusiond/config/tmp_genesis.json && mv $HOME/.fusiond/config/tmp_genesis.json $HOME/.fusiond/config/genesis.json
 cat $HOME/.fusiond/config/genesis.json | jq '.app_state["feemarket"]["params"]["base_fee"]="50"' > $HOME/.fusiond/config/tmp_genesis.json && mv $HOME/.fusiond/config/tmp_genesis.json $HOME/.fusiond/config/genesis.json
 
-function ssed {
-    if [[ "$OSTYPE" == "darwin"* ]]; then
-        gsed "$@"
-    else
-        sed "$@"
-    fi
-}
+
 
 # disable produce empty block and enable prometheus metrics
 ssed -i 's/create_empty_blocks = true/create_empty_blocks = false/g' $HOME/.fusiond/config/config.toml
@@ -81,12 +112,12 @@ if [[ $1 == "pending" ]]; then
 fi
 
 # Allocate genesis accounts (cosmos formatted addresses)
-fusiond add-genesis-account $K1 100000000000000000000000000nQRDO --keyring-backend $KEYRING
-fusiond add-genesis-account $K2 100000000000000000000000000nQRDO --keyring-backend $KEYRING
+fusiond add-genesis-account $Default_ACCOUNT1 100000000000000000000000000nQRDO --keyring-backend $KEYRING
+fusiond add-genesis-account $Default_ACCOUNT2 100000000000000000000000000nQRDO --keyring-backend $KEYRING
 
 # Sign genesis transaction
-fusiond gentx $K1 1000000000000000000000nQRDO --keyring-backend $KEYRING --chain-id $CHAINID #--output-document $HOME/.fusiond/config/gentx-sk1.json
-# fusiond gentx $K2 1000000000000000000000nQRDO --keyring-backend $KEYRING --chain-id $CHAINID --output-document $HOME/.fusiond/config/gentx/gentx-sk2.json
+fusiond gentx $Default_ACCOUNT1 1000000000000000000000nQRDO --keyring-backend $KEYRING --chain-id $CHAINID #--output-document $HOME/.fusiond/config/gentx-sk1.json
+# fusiond gentx $Default_ACCOUNT2 1000000000000000000000nQRDO --keyring-backend $KEYRING --chain-id $CHAINID --output-document $HOME/.fusiond/config/gentx/gentx-sk2.json
 
 # Collect genesis tx
 fusiond collect-gentxs
@@ -103,6 +134,26 @@ if [[ $1 != "--defaultports" ]]; then
   ssed -i 's/9090/9790/g' $HOME/.fusiond/config/app.toml
   ssed -i 's/9091/9791/g' $HOME/.fusiond/config/app.toml
 fi
+
+
+
+# Creating of the fchain alias
+if [[ "$SHELL" == *"/bash" ]]; then
+    # Bash
+    echo "alias fchain=\"fusiond --node $FCHAIN_NODE --home $FCHAIN_HOME --from $Default_ACCOUNT1 --gas-prices $FCHAIN_GAS_PRICES\"" >> ~/.bashrc
+    source  ~/.bashrc 
+    echo "fchain alias is added"
+elif [[ "$SHELL" == *"/zsh" ]]; then
+    # Zsh // not tested
+    config_file="~/.zshrc"
+    echo "alias fchain="fusiond --node $FCHAIN_NODE --home $FCHAIN_HOME --from $Default_ACCOUNT1 --gas-prices $FCHAIN_GAS_PRICES"'" >> ~/.zshrc
+    source ~/.zshrc
+    echo "fchain alias is added"
+else
+    echo "The shell is not compatible with this script. fchain alias to be added manually."
+fi
+
+
 
 # Start the node (remove the --pruning=nothing flag if historical queries are not needed)
 fusiond start --pruning=nothing --evm.tracer=json $TRACE --log_level $LOGLEVEL --minimum-gas-prices=0.0001nQRDO --json-rpc.api eth,txpool,personal,net,debug,web3,miner --api.enable  --api.enabled-unsafe-cors
