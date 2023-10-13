@@ -52,7 +52,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/store/streaming"
 	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	mempool "github.com/cosmos/cosmos-sdk/types/mempool"
+	"github.com/cosmos/cosmos-sdk/types/mempool"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	"github.com/cosmos/cosmos-sdk/version"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -143,21 +143,9 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v7/modules/core/keeper"
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
-	// unnamed import of statik for swagger UI support
-	_ "github.com/qredo/fusionchain/client/docs/statik"
-
-	"github.com/qredo/fusionchain/app/ante"
-	"github.com/qredo/fusionchain/ethereum/eip712"
 	srvflags "github.com/qredo/fusionchain/server/flags"
 	ethermint "github.com/qredo/fusionchain/types"
-	"github.com/qredo/fusionchain/x/evm"
-	evmkeeper "github.com/qredo/fusionchain/x/evm/keeper"
-	evmtypes "github.com/qredo/fusionchain/x/evm/types"
-	"github.com/qredo/fusionchain/x/evm/vm/geth"
-	"github.com/qredo/fusionchain/x/feemarket"
-	feemarketkeeper "github.com/qredo/fusionchain/x/feemarket/keeper"
-	feemarkettypes "github.com/qredo/fusionchain/x/feemarket/types"
-	revenue "github.com/qredo/fusionchain/x/revenue/v1"
+	"github.com/qredo/fusionchain/x/revenue/v1"
 	revenuekeeper "github.com/qredo/fusionchain/x/revenue/v1/keeper"
 	revenuetypes "github.com/qredo/fusionchain/x/revenue/v1/types"
 	"github.com/qredo/fusionchain/x/wasm"
@@ -171,6 +159,20 @@ import (
 	// Force-load the tracer engines to trigger registration due to Go-Ethereum v1.10.15 changes
 	_ "github.com/ethereum/go-ethereum/eth/tracers/js"
 	_ "github.com/ethereum/go-ethereum/eth/tracers/native"
+
+	"github.com/evmos/ethermint/x/evm"
+	evmkeeper "github.com/evmos/ethermint/x/evm/keeper"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
+	"github.com/evmos/ethermint/x/evm/vm/geth"
+	"github.com/evmos/ethermint/x/feemarket"
+	feemarketkeeper "github.com/evmos/ethermint/x/feemarket/keeper"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
+
+	"github.com/evmos/ethermint/app/ante"
+	_ "github.com/evmos/ethermint/client/docs/statik"
+	"github.com/evmos/ethermint/ethereum/eip712"
+
+	ethermint "github.com/evmos/ethermint/types"
 
 	identitymodule "github.com/qredo/fusionchain/x/identity"
 	identitymodulekeeper "github.com/qredo/fusionchain/x/identity/keeper"
@@ -1076,7 +1078,6 @@ func NewEthermintApp(
 		EvmKeeper:              app.EvmKeeper,
 		FeeMarketKeeper:        app.FeeMarketKeeper,
 		MaxTxGasWanted:         cast.ToUint64(appOpts.Get(srvflags.EVMMaxTxGasWanted)),
-		WasmConfig:             &wasmConfig,
 		ExtensionOptionChecker: ethermint.HasDynamicFeeExtensionOption,
 		TxFeeChecker:           ante.NewDynamicFeeChecker(app.EvmKeeper),
 		DisabledAuthzMsgs: []string{
