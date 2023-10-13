@@ -51,7 +51,7 @@ export async function fetchAccount(
 
 export function createMsgNewWorkspace(creator, adminPolicyID, signPolicyID) {
   return {
-    type: 'fusionchain/MsgNewWorkspace',
+    type: 'identity/NewWorkspace',
     value: {
       creator: creator,
       admin_policy_id: adminPolicyID,
