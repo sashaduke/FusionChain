@@ -144,7 +144,6 @@ import (
 	ibctm "github.com/cosmos/ibc-go/v7/modules/light-clients/07-tendermint"
 
 	srvflags "github.com/qredo/fusionchain/server/flags"
-	ethermint "github.com/qredo/fusionchain/types"
 	"github.com/qredo/fusionchain/x/revenue/v1"
 	revenuekeeper "github.com/qredo/fusionchain/x/revenue/v1/keeper"
 	revenuetypes "github.com/qredo/fusionchain/x/revenue/v1/types"

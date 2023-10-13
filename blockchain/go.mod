@@ -18,6 +18,7 @@ require (
 	github.com/cosmos/gogoproto v1.4.10
 	github.com/cosmos/iavl v0.20.1
 	github.com/cosmos/ibc-go/v7 v7.3.0
+	github.com/docker/distribution v2.8.2+incompatible
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/evmos/ethermint v0.0.0-00010101000000-000000000000
 	github.com/go-git/go-git/v5 v5.5.2
@@ -25,6 +26,8 @@ require (
 	github.com/google/gofuzz v1.2.0
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
+	github.com/pkg/errors v0.9.1
+	github.com/prometheus/client_golang v1.16.0
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.5.1
 	github.com/spf13/cobra v1.7.0
@@ -177,7 +180,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.9 // indirect
 	github.com/petermattis/goid v0.0.0-20230518223814-80aa455d8761 // indirect
 	github.com/pjbgf/sha1cd v0.2.3 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
@@ -194,7 +196,6 @@ require (
 	github.com/skeema/knownhosts v1.1.0 // indirect
 	github.com/spf13/afero v1.9.5 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/status-im/keycard-go v0.0.0-20200402102358-957c09536969 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20220721030215-126854af5e6d // indirect
