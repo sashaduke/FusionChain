@@ -12,7 +12,7 @@ func TestCometClient_Status(t *testing.T) {
 	type fields struct {
 		client *http.HTTP
 	}
-	hc, err := http.New("http://localhost:26657", "/websocket")
+	cometClient, err := NewCometClient("http://localhost:26657")
 	if err != nil {
 		t.FailNow()
 	}
@@ -25,7 +25,7 @@ func TestCometClient_Status(t *testing.T) {
 		{
 			name: "get status",
 			fields: fields{
-				client: hc,
+				client: cometClient.client,
 			},
 			want:    nil,
 			wantErr: false,

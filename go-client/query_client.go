@@ -8,7 +8,6 @@ import (
 type QueryClient struct {
 	*AuthQueryClient
 	*TreasuryQueryClient
-	*CometClient
 }
 
 func NewQueryClient(url string, insecure bool) (*QueryClient, error) {
@@ -21,22 +20,12 @@ func NewQueryClient(url string, insecure bool) (*QueryClient, error) {
 		return nil, err
 	}
 
-	qc, err := NewQueryClientWithConn(grpcConn)
-	if err != nil {
-		return nil, err
-	}
-
-	return qc, nil
+	return NewQueryClientWithConn(grpcConn), nil
 }
 
-func NewQueryClientWithConn(c *grpc.ClientConn) (*QueryClient, error) {
-	comet, err := NewCometClient(c.Target())
-	if err != nil {
-		return nil, err
-	}
+func NewQueryClientWithConn(c *grpc.ClientConn) *QueryClient {
 	return &QueryClient{
 		AuthQueryClient:     NewAuthQueryClient(c),
 		TreasuryQueryClient: NewTreasuryQueryClient(c),
-		CometClient:         comet,
-	}, nil
+	}
 }

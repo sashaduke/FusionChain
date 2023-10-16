@@ -50,11 +50,8 @@ func main() {
 
 	fusionConn := MustConnectFusionChain()
 
-	queryClient, err := client.NewQueryClientWithConn(fusionConn)
-	if err != nil {
-		panic(err)
-	}
-	txClient := client.NewTxClient(identity, chainID, fusionConn, queryClient, queryClient.CometClient)
+	queryClient := client.NewQueryClientWithConn(fusionConn)
+	txClient := client.NewTxClient(identity, chainID, fusionConn, queryClient)
 	keyDB := NewMemoryDB()
 	keyRequestsHandler := &MockKeyRequestsHandler{
 		KeyDB:       keyDB,
