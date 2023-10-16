@@ -87,7 +87,10 @@ func makeFusionGRPCClient(config *ServiceConfig, identity client.Identity) (Quer
 	if err != nil {
 		return nil, nil, err
 	}
-	queryClient := client.NewQueryClientWithConn(fusionGRPCClient)
-	txClient := client.NewTxClient(identity, config.ChainID, fusionGRPCClient, queryClient)
+	queryClient, err := client.NewQueryClientWithConn(fusionGRPCClient)
+	if err != nil {
+		return nil, nil, err
+	}
+	txClient := client.NewTxClient(identity, config.ChainID, fusionGRPCClient, queryClient, queryClient.CometClient)
 	return queryClient, txClient, nil
 }

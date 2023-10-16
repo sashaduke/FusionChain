@@ -8,10 +8,11 @@ import (
 type QueryClient struct {
 	*AuthQueryClient
 	*TreasuryQueryClient
+	*CometClient
 }
 
 func NewQueryClient(url string, insecure bool) (*QueryClient, error) {
-	opts := []grpc.DialOption{}
+	var opts []grpc.DialOption
 	if insecure {
 		opts = append(opts, grpc.WithTransportCredentials(insecurecreds.NewCredentials()))
 	}
@@ -20,12 +21,22 @@ func NewQueryClient(url string, insecure bool) (*QueryClient, error) {
 		return nil, err
 	}
 
-	return NewQueryClientWithConn(grpcConn), nil
+	qc, err := NewQueryClientWithConn(grpcConn)
+	if err != nil {
+		return nil, err
+	}
+
+	return qc, nil
 }
 
-func NewQueryClientWithConn(c *grpc.ClientConn) *QueryClient {
+func NewQueryClientWithConn(c *grpc.ClientConn) (*QueryClient, error) {
+	comet, err := NewCometClient(c.Target())
+	if err != nil {
+		return nil, err
+	}
 	return &QueryClient{
 		AuthQueryClient:     NewAuthQueryClient(c),
 		TreasuryQueryClient: NewTreasuryQueryClient(c),
-	}
+		CometClient:         comet,
+	}, nil
 }

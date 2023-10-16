@@ -46,7 +46,7 @@ func NewRawTxClient(id Identity, chainID string, c *grpc.ClientConn, accountFetc
 	}
 }
 
-// Send a transaction and wait for it to be included in a block.
+// SendWaitTx Send a transaction and wait for it to be included in a block.
 func (c *RawTxClient) SendWaitTx(ctx context.Context, txBytes []byte) error {
 	hash, err := c.SendTx(ctx, txBytes)
 	if err != nil {
@@ -62,7 +62,7 @@ func (c *RawTxClient) SendWaitTx(ctx context.Context, txBytes []byte) error {
 	return nil
 }
 
-// Build a transaction with the given messages and sign it.
+// BuildTx Build a transaction with the given messages and sign it.
 // Sequence and account numbers will be fetched automatically from the chain.
 func (c *RawTxClient) BuildTx(ctx context.Context, gasLimit uint64, fees types.Coins, msgs ...types.Msg) ([]byte, error) {
 	account, err := c.accountFetcher.Account(ctx, c.Identity.Address.String())
