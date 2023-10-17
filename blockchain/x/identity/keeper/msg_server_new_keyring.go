@@ -18,9 +18,9 @@ func (k msgServer) NewKeyring(goCtx context.Context, msg *types.MsgNewKeyring) (
 		Fees:          msg.Fees,
 		IsActive:      true,
 	}
-	id := k.KeyringsRepo().Append(ctx, keyring)
+	address := k.CreateKeyring(ctx, keyring)
 
 	return &types.MsgNewKeyringResponse{
-		Id: id,
+		Address: address,
 	}, nil
 }
