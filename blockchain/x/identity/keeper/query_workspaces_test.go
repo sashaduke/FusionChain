@@ -23,7 +23,7 @@ func TestKeeper_Workspaces(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "create 2 workspaces",
+			name: "create 100 workspaces",
 			args: args{
 				req: &types.QueryWorkspacesRequest{
 					Pagination: nil,
