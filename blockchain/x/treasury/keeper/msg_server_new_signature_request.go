@@ -70,6 +70,21 @@ func (k msgServer) NewSignatureRequestActionHandler(ctx sdk.Context, act *bbirdt
 				return nil, fmt.Errorf("workspace not found")
 			}
 
+			keyring := k.identityKeeper.GetKeyring(ctx, key.KeyringAddr)
+			if keyring == nil {
+				return nil, fmt.Errorf("keyring not found")
+			}
+
+			err := k.bankKeeper.SendCoins(
+				ctx,
+				sdk.AccAddress(msg.Creator),
+				sdk.AccAddress(key.KeyringAddr),
+				sdk.NewCoins(sdk.NewCoin("nQRDO", sdk.NewIntFromUint64(keyring.Fees.KeyReq))),
+			)
+			if err != nil {
+				return nil, err
+			}
+
 			req := &types.SignRequest{
 				Creator:        msg.Creator,
 				KeyId:          msg.KeyId,
