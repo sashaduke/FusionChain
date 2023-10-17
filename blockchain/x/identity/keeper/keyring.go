@@ -42,7 +42,7 @@ func (k Keeper) CreateKeyring(ctx sdk.Context, keyring *types.Keyring) string {
 	buf := make([]byte, 8)
 	binary.LittleEndian.PutUint64(buf, count)
 	addrHash := sha256.Sum256(buf)
-	keyring.Address = sdk.MustBech32ifyAddressBytes("qredokeyring", sdk.AccAddress(addrHash[:8]))
+	keyring.Address = sdk.MustBech32ifyAddressBytes("qredokeyring", sdk.AccAddress(addrHash[16:24]))
 	k.SetKeyring(ctx, keyring)
 	k.SetKeyringCount(ctx, count+1)
 	return keyring.Address

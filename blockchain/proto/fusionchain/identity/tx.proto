@@ -81,7 +81,7 @@ message MsgNewKeyringResponse { string address = 1; }
 
 message MsgAddKeyringParty {
   string creator = 1;
-  uint64 keyring_id = 2;
+  string keyring_addr = 2;
   string party = 3;
 }
 
@@ -116,7 +116,7 @@ message MsgUpdateWorkspaceResponse {}
 
 message MsgUpdateKeyring {
   string creator = 1;
-  uint64 id = 2;
+  string keyring_addr = 2;
   string description = 3;
   bool is_active = 4;
 }
