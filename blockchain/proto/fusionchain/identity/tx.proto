@@ -77,7 +77,7 @@ message MsgNewKeyring {
   KeyringFees fees = 4;
 }
 
-message MsgNewKeyringResponse { uint64 id = 1; }
+message MsgNewKeyringResponse { string address = 1; }
 
 message MsgAddKeyringParty {
   string creator = 1;
