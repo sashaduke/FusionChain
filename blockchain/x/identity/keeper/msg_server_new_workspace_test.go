@@ -15,18 +15,45 @@ func Test_msgServer_NewWorkspace(t *testing.T) {
 		msg *types.MsgNewWorkspace
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    *types.MsgNewWorkspaceResponse
-		wantErr bool
+		name        string
+		args        args
+		want        *types.MsgNewWorkspaceResponse
+		wantCreated *types.Workspace
+		wantErr     bool
 	}{
 		{
 			name: "create a workspace",
 			args: args{
-				msg: types.NewMsgNewWorkspace("test", 0, 0),
+				msg: types.NewMsgNewWorkspace("testOwner", 0, 0),
 			},
 			want: &types.MsgNewWorkspaceResponse{
 				Address: "qredoworkspace14a2hpadpsy9h5m6us54",
+			},
+			wantCreated: &types.Workspace{
+				Address:         "qredoworkspace14a2hpadpsy9h5m6us54",
+				Creator:         "testOwner",
+				Owners:          []string{"testOwner"},
+				ChildWorkspaces: nil,
+				AdminPolicyId:   0,
+				SignPolicyId:    0,
+			},
+			wantErr: false,
+		},
+		{
+			name: "create a workspace with additional owners",
+			args: args{
+				msg: types.NewMsgNewWorkspace("testOwner", 0, 0, "owner1", "owner2"),
+			},
+			want: &types.MsgNewWorkspaceResponse{
+				Address: "qredoworkspace14a2hpadpsy9h5m6us54",
+			},
+			wantCreated: &types.Workspace{
+				Address:         "qredoworkspace14a2hpadpsy9h5m6us54",
+				Creator:         "testOwner",
+				Owners:          []string{"testOwner", "owner1", "owner2"},
+				ChildWorkspaces: nil,
+				AdminPolicyId:   0,
+				SignPolicyId:    0,
 			},
 			wantErr: false,
 		},
@@ -35,7 +62,6 @@ func Test_msgServer_NewWorkspace(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ik, ctx := keepertest.IdentityKeeper(t)
 			goCtx := sdk.WrapSDKContext(ctx)
-
 			msgSer := keeper.NewMsgServerImpl(*ik)
 			got, err := msgSer.NewWorkspace(goCtx, tt.args.msg)
 			if (err != nil) != tt.wantErr {
@@ -45,9 +71,11 @@ func Test_msgServer_NewWorkspace(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("NewWorkspace() got = %v, want %v", got, tt.want)
 			}
-			createdWrk := ik.GetWorkspace(ctx, got.Address)
-			if createdWrk.Creator != tt.args.msg.Creator || createdWrk.AdminPolicyId != tt.args.msg.AdminPolicyId || createdWrk.SignPolicyId != tt.args.msg.SignPolicyId {
-				t.Errorf("NewWorkspace() created workspace = %v, want %v", createdWrk, tt.args.msg)
+			if !tt.wantErr {
+				gotWorkspace := ik.GetWorkspace(ctx, got.Address)
+				if !reflect.DeepEqual(gotWorkspace, tt.wantCreated) {
+					t.Errorf("NewWorkspace() got = %v, want %v", gotWorkspace, tt.wantCreated)
+				}
 			}
 		})
 	}
