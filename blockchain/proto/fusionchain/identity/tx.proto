@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "fusionchain/identity/keyring.proto";
+
 package fusionchain.identity;
 
 option go_package = "github.com/qredo/fusionchain/x/identity/types";
@@ -71,6 +73,8 @@ message MsgRemoveWorkspaceOwnerResponse {}
 message MsgNewKeyring {
   string creator = 1;
   string description = 2;
+  uint64 admin_policy_id = 3;
+  KeyringFees fees = 4;
 }
 
 message MsgNewKeyringResponse { uint64 id = 1; }

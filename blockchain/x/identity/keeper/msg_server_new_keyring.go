@@ -11,10 +11,12 @@ func (k msgServer) NewKeyring(goCtx context.Context, msg *types.MsgNewKeyring) (
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
 	keyring := &types.Keyring{
-		Creator:     msg.Creator,
-		Description: msg.Description,
-		Admins:      []string{msg.Creator},
-		IsActive:    true,
+		Creator:       msg.Creator,
+		Description:   msg.Description,
+		Admins:        []string{msg.Creator},
+		AdminPolicyId: msg.AdminPolicyId,
+		Fees:          msg.Fees,
+		IsActive:      true,
 	}
 	id := k.KeyringsRepo().Append(ctx, keyring)
 

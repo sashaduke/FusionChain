@@ -23,12 +23,14 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Keyring struct {
-	Id          uint64   `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Creator     string   `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
-	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Admins      []string `protobuf:"bytes,4,rep,name=admins,proto3" json:"admins,omitempty"`
-	Parties     []string `protobuf:"bytes,5,rep,name=parties,proto3" json:"parties,omitempty"`
-	IsActive    bool     `protobuf:"varint,6,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
+	Id            uint64       `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Creator       string       `protobuf:"bytes,2,opt,name=creator,proto3" json:"creator,omitempty"`
+	Description   string       `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Admins        []string     `protobuf:"bytes,4,rep,name=admins,proto3" json:"admins,omitempty"`
+	Parties       []string     `protobuf:"bytes,5,rep,name=parties,proto3" json:"parties,omitempty"`
+	AdminPolicyId uint64       `protobuf:"varint,6,opt,name=admin_policy_id,json=adminPolicyId,proto3" json:"admin_policy_id,omitempty"`
+	Fees          *KeyringFees `protobuf:"bytes,7,opt,name=fees,proto3" json:"fees,omitempty"`
+	IsActive      bool         `protobuf:"varint,8,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
 }
 
 func (m *Keyring) Reset()         { *m = Keyring{} }
@@ -99,6 +101,20 @@ func (m *Keyring) GetParties() []string {
 	return nil
 }
 
+func (m *Keyring) GetAdminPolicyId() uint64 {
+	if m != nil {
+		return m.AdminPolicyId
+	}
+	return 0
+}
+
+func (m *Keyring) GetFees() *KeyringFees {
+	if m != nil {
+		return m.Fees
+	}
+	return nil
+}
+
 func (m *Keyring) GetIsActive() bool {
 	if m != nil {
 		return m.IsActive
@@ -106,8 +122,61 @@ func (m *Keyring) GetIsActive() bool {
 	return false
 }
 
+type KeyringFees struct {
+	KeyReq uint64 `protobuf:"varint,1,opt,name=key_req,json=keyReq,proto3" json:"key_req,omitempty"`
+	SigReq uint64 `protobuf:"varint,2,opt,name=sig_req,json=sigReq,proto3" json:"sig_req,omitempty"`
+}
+
+func (m *KeyringFees) Reset()         { *m = KeyringFees{} }
+func (m *KeyringFees) String() string { return proto.CompactTextString(m) }
+func (*KeyringFees) ProtoMessage()    {}
+func (*KeyringFees) Descriptor() ([]byte, []int) {
+	return fileDescriptor_5a6775396e8348ed, []int{1}
+}
+func (m *KeyringFees) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *KeyringFees) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_KeyringFees.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *KeyringFees) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_KeyringFees.Merge(m, src)
+}
+func (m *KeyringFees) XXX_Size() int {
+	return m.Size()
+}
+func (m *KeyringFees) XXX_DiscardUnknown() {
+	xxx_messageInfo_KeyringFees.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_KeyringFees proto.InternalMessageInfo
+
+func (m *KeyringFees) GetKeyReq() uint64 {
+	if m != nil {
+		return m.KeyReq
+	}
+	return 0
+}
+
+func (m *KeyringFees) GetSigReq() uint64 {
+	if m != nil {
+		return m.SigReq
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Keyring)(nil), "fusionchain.identity.Keyring")
+	proto.RegisterType((*KeyringFees)(nil), "fusionchain.identity.KeyringFees")
 }
 
 func init() {
@@ -115,23 +184,28 @@ func init() {
 }
 
 var fileDescriptor_5a6775396e8348ed = []byte{
-	// 249 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x90, 0x31, 0x4e, 0xc3, 0x30,
-	0x14, 0x86, 0xe3, 0xb4, 0xa4, 0x8d, 0x91, 0x18, 0x2c, 0x84, 0x2c, 0x21, 0x59, 0x56, 0xa7, 0x2c,
-	0x24, 0x03, 0x27, 0x80, 0x85, 0x81, 0x2d, 0x23, 0x0b, 0x72, 0x6d, 0xd3, 0x3e, 0xa1, 0xda, 0xc1,
-	0x7e, 0x45, 0xe4, 0x16, 0x1c, 0x82, 0xc3, 0x30, 0x76, 0x64, 0x44, 0xc9, 0x45, 0x10, 0x81, 0xa8,
-	0x19, 0xbf, 0xf7, 0x7f, 0x7a, 0xc3, 0x47, 0x57, 0x4f, 0xfb, 0x08, 0xde, 0xe9, 0xad, 0x02, 0x57,
-	0x81, 0xb1, 0x0e, 0x01, 0xdb, 0xea, 0xd9, 0xb6, 0x01, 0xdc, 0xa6, 0x6c, 0x82, 0x47, 0xcf, 0xce,
-	0x27, 0x4e, 0x39, 0x3a, 0xab, 0x0f, 0x42, 0x17, 0xf7, 0x7f, 0x1e, 0x3b, 0xa3, 0x29, 0x18, 0x4e,
-	0x24, 0x29, 0xe6, 0x75, 0x0a, 0x86, 0x71, 0xba, 0xd0, 0xc1, 0x2a, 0xf4, 0x81, 0xa7, 0x92, 0x14,
-	0x79, 0x3d, 0x22, 0x93, 0xf4, 0xd4, 0xd8, 0xa8, 0x03, 0x34, 0x08, 0xde, 0xf1, 0xd9, 0xb0, 0x4e,
-	0x4f, 0xec, 0x82, 0x66, 0xca, 0xec, 0xc0, 0x45, 0x3e, 0x97, 0xb3, 0x22, 0xaf, 0xff, 0xe9, 0xf7,
-	0x67, 0xa3, 0x02, 0x82, 0x8d, 0xfc, 0x64, 0x18, 0x46, 0x64, 0x97, 0x34, 0x87, 0xf8, 0xa8, 0x34,
-	0xc2, 0xab, 0xe5, 0x99, 0x24, 0xc5, 0xb2, 0x5e, 0x42, 0xbc, 0x19, 0xf8, 0xf6, 0xee, 0xb3, 0x13,
-	0xe4, 0xd0, 0x09, 0xf2, 0xdd, 0x09, 0xf2, 0xde, 0x8b, 0xe4, 0xd0, 0x8b, 0xe4, 0xab, 0x17, 0xc9,
-	0xc3, 0xd5, 0x06, 0x70, 0xbb, 0x5f, 0x97, 0xda, 0xef, 0xaa, 0x97, 0x60, 0x8d, 0xaf, 0xa6, 0x2d,
-	0xde, 0x8e, 0x35, 0xb0, 0x6d, 0x6c, 0x5c, 0x67, 0x43, 0x8c, 0xeb, 0x9f, 0x00, 0x00, 0x00, 0xff,
-	0xff, 0xef, 0x19, 0xf9, 0xd3, 0x32, 0x01, 0x00, 0x00,
+	// 335 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0xb1, 0x4e, 0xeb, 0x30,
+	0x14, 0x86, 0xeb, 0xb4, 0x37, 0x69, 0x5d, 0xdd, 0x7b, 0x25, 0x0b, 0x81, 0x25, 0xa4, 0x28, 0x74,
+	0x40, 0x59, 0x48, 0x24, 0x10, 0x33, 0x82, 0x01, 0x84, 0x58, 0x50, 0x46, 0x96, 0x28, 0x8d, 0x4f,
+	0xd3, 0xa3, 0xd2, 0x38, 0xb1, 0x5d, 0x44, 0x66, 0x5e, 0x80, 0xc7, 0x62, 0xec, 0xc8, 0x88, 0xda,
+	0x17, 0x41, 0x75, 0x5b, 0x91, 0x81, 0xf1, 0x3f, 0xdf, 0x67, 0xcb, 0xc7, 0x3f, 0x1d, 0x4d, 0x16,
+	0x1a, 0x65, 0x99, 0x4f, 0x33, 0x2c, 0x63, 0x14, 0x50, 0x1a, 0x34, 0x4d, 0x3c, 0x83, 0x46, 0x61,
+	0x59, 0x44, 0x95, 0x92, 0x46, 0xb2, 0x83, 0x96, 0x13, 0xed, 0x9d, 0xd1, 0x9b, 0x43, 0xbd, 0x87,
+	0xad, 0xc7, 0xfe, 0x51, 0x07, 0x05, 0x27, 0x01, 0x09, 0x7b, 0x89, 0x83, 0x82, 0x71, 0xea, 0xe5,
+	0x0a, 0x32, 0x23, 0x15, 0x77, 0x02, 0x12, 0x0e, 0x92, 0x7d, 0x64, 0x01, 0x1d, 0x0a, 0xd0, 0xb9,
+	0xc2, 0xca, 0xa0, 0x2c, 0x79, 0xd7, 0xd2, 0xf6, 0x88, 0x1d, 0x52, 0x37, 0x13, 0x73, 0x2c, 0x35,
+	0xef, 0x05, 0xdd, 0x70, 0x90, 0xec, 0xd2, 0xe6, 0xce, 0x2a, 0x53, 0x06, 0x41, 0xf3, 0x3f, 0x16,
+	0xec, 0x23, 0x3b, 0xa5, 0xff, 0xad, 0x93, 0x56, 0xf2, 0x19, 0xf3, 0x26, 0x45, 0xc1, 0x5d, 0xfb,
+	0x94, 0xbf, 0x76, 0xfc, 0x68, 0xa7, 0xf7, 0x82, 0x5d, 0xd2, 0xde, 0x04, 0x40, 0x73, 0x2f, 0x20,
+	0xe1, 0xf0, 0xfc, 0x24, 0xfa, 0x6d, 0xad, 0x68, 0xb7, 0xd2, 0x2d, 0x80, 0x4e, 0xac, 0xce, 0x8e,
+	0xe9, 0x00, 0x75, 0x9a, 0xe5, 0x06, 0x5f, 0x80, 0xf7, 0x03, 0x12, 0xf6, 0x93, 0x3e, 0xea, 0x6b,
+	0x9b, 0x47, 0x57, 0x74, 0xd8, 0x3a, 0xc1, 0x8e, 0xa8, 0x37, 0x83, 0x26, 0x55, 0x50, 0xef, 0x7e,
+	0xc3, 0x9d, 0x41, 0x93, 0x40, 0xbd, 0x01, 0x1a, 0x0b, 0x0b, 0x9c, 0x2d, 0xd0, 0x58, 0x24, 0x50,
+	0xdf, 0xdc, 0x7d, 0xac, 0x7c, 0xb2, 0x5c, 0xf9, 0xe4, 0x6b, 0xe5, 0x93, 0xf7, 0xb5, 0xdf, 0x59,
+	0xae, 0xfd, 0xce, 0xe7, 0xda, 0xef, 0x3c, 0x9d, 0x15, 0x68, 0xa6, 0x8b, 0x71, 0x94, 0xcb, 0x79,
+	0x5c, 0x2b, 0x10, 0x32, 0x6e, 0x77, 0xf5, 0xfa, 0xd3, 0x96, 0x69, 0x2a, 0xd0, 0x63, 0xd7, 0x96,
+	0x75, 0xf1, 0x1d, 0x00, 0x00, 0xff, 0xff, 0x75, 0x7d, 0x70, 0x4b, 0xd2, 0x01, 0x00, 0x00,
 }
 
 func (m *Keyring) Marshal() (dAtA []byte, err error) {
@@ -161,6 +235,23 @@ func (m *Keyring) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		} else {
 			dAtA[i] = 0
 		}
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.Fees != nil {
+		{
+			size, err := m.Fees.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintKeyring(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.AdminPolicyId != 0 {
+		i = encodeVarintKeyring(dAtA, i, uint64(m.AdminPolicyId))
 		i--
 		dAtA[i] = 0x30
 	}
@@ -198,6 +289,39 @@ func (m *Keyring) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if m.Id != 0 {
 		i = encodeVarintKeyring(dAtA, i, uint64(m.Id))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *KeyringFees) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *KeyringFees) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *KeyringFees) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.SigReq != 0 {
+		i = encodeVarintKeyring(dAtA, i, uint64(m.SigReq))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.KeyReq != 0 {
+		i = encodeVarintKeyring(dAtA, i, uint64(m.KeyReq))
 		i--
 		dAtA[i] = 0x8
 	}
@@ -244,8 +368,30 @@ func (m *Keyring) Size() (n int) {
 			n += 1 + l + sovKeyring(uint64(l))
 		}
 	}
+	if m.AdminPolicyId != 0 {
+		n += 1 + sovKeyring(uint64(m.AdminPolicyId))
+	}
+	if m.Fees != nil {
+		l = m.Fees.Size()
+		n += 1 + l + sovKeyring(uint64(l))
+	}
 	if m.IsActive {
 		n += 2
+	}
+	return n
+}
+
+func (m *KeyringFees) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.KeyReq != 0 {
+		n += 1 + sovKeyring(uint64(m.KeyReq))
+	}
+	if m.SigReq != 0 {
+		n += 1 + sovKeyring(uint64(m.SigReq))
 	}
 	return n
 }
@@ -434,6 +580,61 @@ func (m *Keyring) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 6:
 			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdminPolicyId", wireType)
+			}
+			m.AdminPolicyId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKeyring
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.AdminPolicyId |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Fees", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKeyring
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthKeyring
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthKeyring
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Fees == nil {
+				m.Fees = &KeyringFees{}
+			}
+			if err := m.Fees.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field IsActive", wireType)
 			}
 			var v int
@@ -452,6 +653,94 @@ func (m *Keyring) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsActive = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipKeyring(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthKeyring
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *KeyringFees) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowKeyring
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: KeyringFees: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: KeyringFees: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field KeyReq", wireType)
+			}
+			m.KeyReq = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKeyring
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.KeyReq |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SigReq", wireType)
+			}
+			m.SigReq = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowKeyring
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.SigReq |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipKeyring(dAtA[iNdEx:])
