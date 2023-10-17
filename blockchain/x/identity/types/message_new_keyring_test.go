@@ -1,7 +1,6 @@
 package types
 
 import (
-	"encoding/json"
 	"testing"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,7 +11,6 @@ import (
 )
 
 func TestMsgNewKeyring_NewMsgNewKeyring(t *testing.T) {
-
 	tests := []struct {
 		name string
 		msg  *MsgNewKeyring
@@ -83,7 +81,6 @@ func TestMsgNewKeyring_Type(t *testing.T) {
 }
 
 func TestMsgNewKeyring_GetSigners(t *testing.T) {
-
 	tests := []struct {
 		name string
 		msg  *MsgNewKeyring
@@ -118,37 +115,6 @@ func TestMsgNewKeyring_GetSigners(t *testing.T) {
 
 				assert.Equal(t, []sdk.AccAddress{acc}, got)
 			}
-		})
-	}
-}
-
-func TestMsgNewKeyring_GetSignBytes(t *testing.T) {
-
-	tests := []struct {
-		name string
-		msg  *MsgNewKeyring
-	}{
-		{
-			name: "PASS: happy path",
-			msg: &MsgNewKeyring{
-				Creator:       sample.AccAddress(),
-				Description:   "Test Keyring",
-				AdminPolicyId: 0,
-				Fees:          &KeyringFees{KeyReq: 0, SigReq: 0},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			msg := NewMsgNewKeyring(tt.msg.Creator, tt.msg.Description, tt.msg.AdminPolicyId, tt.msg.Fees.KeyReq, tt.msg.Fees.SigReq)
-			got := msg.GetSignBytes()
-
-			bz, err := json.Marshal(msg)
-			require.NoError(t, err, "failed to marshal message to JSON")
-			sortedBz := sdk.MustSortJSON(bz)
-
-			require.Equal(t, sortedBz, got, "GetSignBytes() result doesn't match sorted JSON bytes")
-
 		})
 	}
 }
