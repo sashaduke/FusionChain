@@ -1,3 +1,10 @@
+## fusiond [1.7.1](https://github.com/qredo/fusionchain/compare/fusiond@1.7.0...fusiond@1.7.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* testutils dependencies ([#233](https://github.com/qredo/fusionchain/issues/233)) ([40c73a1](https://github.com/qredo/fusionchain/commit/40c73a16c911c8065a7208552f24dfbecfb99cfb))
+
 # fusiond [1.7.0](https://github.com/qredo/fusionchain/compare/fusiond@1.6.3...fusiond@1.7.0) (2024-01-19)
 
 
