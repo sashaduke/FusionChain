@@ -1,3 +1,10 @@
+## fusiond [1.8.1](https://github.com/qredo/fusionchain/compare/fusiond@1.8.0...fusiond@1.8.1) (2024-01-25)
+
+
+### Bug Fixes
+
+* **blockchain:** mapToDeterministicSlice ([#235](https://github.com/qredo/fusionchain/issues/235)) ([558a4f9](https://github.com/qredo/fusionchain/commit/558a4f9fb9433e4c44396f46daece330d4c6c49b))
+
 # fusiond [1.8.0](https://github.com/qredo/fusionchain/compare/fusiond@1.7.1...fusiond@1.8.0) (2024-01-25)
 
 
