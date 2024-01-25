@@ -1,3 +1,10 @@
+# fusiond [1.8.0](https://github.com/qredo/fusionchain/compare/fusiond@1.7.1...fusiond@1.8.0) (2024-01-25)
+
+
+### Features
+
+* **blockchain:** Valuepolicy ([#234](https://github.com/qredo/fusionchain/issues/234)) ([f2add5e](https://github.com/qredo/fusionchain/commit/f2add5eb5b585a0f8ece6599934c2e9504fa744b))
+
 ## fusiond [1.7.1](https://github.com/qredo/fusionchain/compare/fusiond@1.7.0...fusiond@1.7.1) (2024-01-25)
 
 
