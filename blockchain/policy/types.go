@@ -78,7 +78,7 @@ type Policy interface {
 
 	// Verify tries to verify the current policy. The returned error is nil if
 	// the policy is valid.
-	Verify(approvers ApproverSet, payload PolicyPayload) error
+	Verify(approvers ApproverSet, payload PolicyPayload, policyData map[string][]byte) error
 }
 
 type PolicyMetadata interface {

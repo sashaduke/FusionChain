@@ -35,9 +35,9 @@ func TestPolicy(t *testing.T) {
 	require.NoError(t, err)
 
 	// verify the unpacked Policy
-	require.NoError(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"foo"}), policy.EmptyPolicyPayload()))
-	require.NoError(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"bar"}), policy.EmptyPolicyPayload()))
-	require.Error(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"baz"}), policy.EmptyPolicyPayload()))
+	require.NoError(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"foo"}), policy.EmptyPolicyPayload(), nil))
+	require.NoError(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"bar"}), policy.EmptyPolicyPayload(), nil))
+	require.Error(t, unpackedPolicy.Verify(policy.BuildApproverSet([]string{"baz"}), policy.EmptyPolicyPayload(), nil))
 }
 
 func TestValidateBlackbirdPolicy(t *testing.T) {
@@ -161,6 +161,39 @@ func TestVerifyBoolparserPolicy(t *testing.T) {
 			approvers: []string{"t1"},
 			wantErr:   true,
 		},
+		{
+			name: "Value > 100",
+			policy: &BoolparserPolicy{
+				Definition: "(t1 > 0) & (TXVALUE > 100)",
+				Participants: []*PolicyParticipant{
+					{Abbreviation: "t1", Address: "qredoXXXXXXX"},
+				},
+			},
+			approvers: []string{"t1"},
+			wantErr:   false,
+		},
+		{
+			name: "Value > 300",
+			policy: &BoolparserPolicy{
+				Definition: "(t1 > 0) & (TXVALUE > 300)",
+				Participants: []*PolicyParticipant{
+					{Abbreviation: "t1", Address: "qredoXXXXXXX"},
+				},
+			},
+			approvers: []string{"t1"},
+			wantErr:   true,
+		},
+		{
+			name: "Value < 300",
+			policy: &BoolparserPolicy{
+				Definition: "(t1 > 0) & (TXVALUE < 300)",
+				Participants: []*PolicyParticipant{
+					{Abbreviation: "t1", Address: "qredoXXXXXXX"},
+				},
+			},
+			approvers: []string{"t1"},
+			wantErr:   false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -172,7 +205,10 @@ func TestVerifyBoolparserPolicy(t *testing.T) {
 			unpackedPolicy, err := UnpackPolicy(cdc, p)
 			require.NoError(t, err)
 
-			err = unpackedPolicy.Verify(policy.BuildApproverSet(tt.approvers), policy.EmptyPolicyPayload())
+			policyData := make(map[string][]byte)
+			policyData["TXVALUE"] = []byte("200")
+
+			err = unpackedPolicy.Verify(policy.BuildApproverSet(tt.approvers), policy.EmptyPolicyPayload(), policyData)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {

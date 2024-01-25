@@ -92,8 +92,7 @@ func TryExecuteAction[ReqT sdk.Msg, ResT any](
 
 	signersSet := policy.BuildApproverSet(act.Approvers)
 
-	// Execute action if policy is satified
-	if err := pol.Verify(signersSet, policy.NewPolicyPayload(cdc, payload)); err == nil {
+	if err := pol.Verify(signersSet, policy.NewPolicyPayload(cdc, payload), act.GetPolicyDataMap()); err == nil {
 		act.Status = types.ActionStatus_ACTION_STATUS_COMPLETED
 		k.SetAction(ctx, act)
 		// error here: error layer=debugger could not resolve parametric type of handlerFn
@@ -138,20 +137,26 @@ func PolicyForAction(ctx sdk.Context, k *Keeper, act *types.Action) (policy.Poli
 // AddAction creates a new action for the provided message with initial approvers.
 // Who calls this function should also immediately check if the action can be
 // executed with the provided initialApprovers, by calling TryExecuteAction.
-func (k Keeper) AddAction(ctx sdk.Context, creator string, msg sdk.Msg, policyID, btl uint64) (*types.Action, error) {
+func (k Keeper) AddAction(ctx sdk.Context, creator string, msg sdk.Msg, policyID, btl uint64, policyData map[string][]byte) (*types.Action, error) {
 	wrappedMsg, err := codectypes.NewAnyWithValue(msg)
 	if err != nil {
 		return nil, err
 	}
 
+	policyDataKv := make([]*types.KeyValue, 0, len(policyData))
+	for k, v := range policyData {
+		policyDataKv = append(policyDataKv, &types.KeyValue{Key: k, Value: v})
+	}
+
 	// create action object
 	act := types.Action{
-		Status:    types.ActionStatus_ACTION_STATUS_PENDING,
-		Approvers: []string{},
-		PolicyId:  policyID,
-		Msg:       wrappedMsg,
-		Creator:   creator,
-		Btl:       btl,
+		Status:     types.ActionStatus_ACTION_STATUS_PENDING,
+		Approvers:  []string{},
+		PolicyId:   policyID,
+		Msg:        wrappedMsg,
+		Creator:    creator,
+		Btl:        btl,
+		PolicyData: policyDataKv,
 	}
 
 	// add initial approver
