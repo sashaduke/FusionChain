@@ -12,6 +12,8 @@ package keeper
 
 import (
 	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -143,11 +145,7 @@ func (k Keeper) AddAction(ctx sdk.Context, creator string, msg sdk.Msg, policyID
 		return nil, err
 	}
 
-	policyDataKv := make([]*types.KeyValue, 0, len(policyData))
-	for k, v := range policyData {
-		policyDataKv = append(policyDataKv, &types.KeyValue{Key: k, Value: v})
-	}
-
+	policyDataKv := mapToDeterministicSlice(policyData)
 	// create action object
 	act := types.Action{
 		Status:     types.ActionStatus_ACTION_STATUS_PENDING,
@@ -177,4 +175,16 @@ func (k Keeper) AddAction(ctx sdk.Context, creator string, msg sdk.Msg, policyID
 	// store and return generated action
 	k.AppendAction(ctx, &act)
 	return &act, nil
+}
+
+func mapToDeterministicSlice(policyData map[string][]byte) []*types.KeyValue {
+	policyDataKv := make([]*types.KeyValue, 0, len(policyData))
+	for k, v := range policyData { // Iterate over map (non-deterministic outcome)
+		policyDataKv = append(policyDataKv, &types.KeyValue{Key: k, Value: v})
+	}
+	// Rank slice by Key.
+	sort.Slice(policyDataKv, func(i, j int) bool {
+		return strings.Compare(policyDataKv[i].Key, policyDataKv[j].Key) < 0
+	})
+	return policyDataKv
 }
